@@ -96,17 +96,19 @@ class TableHeightViewController: UIViewController {
         observeContentSize()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
 
-        guard !hasLoadedData else {
-            logState("viewDidAppear（页面再次显示）")
-            return
-        }
+        guard !hasLoadedData else { return }
 
-        // 此时页面已经加入 window 可以安全地触发布局并读取 contentSize
+        // 在转场首帧前确定表格宽度，再加载数据，避免显示空表及使用零宽度测量行高。
+        view.layoutIfNeeded()
         hasLoadedData = true
         reloadAndLog()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
         logState("viewDidAppear（页面已显示）")
     }
 
